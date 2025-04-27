@@ -36,13 +36,13 @@
                 <form form th:action="@{/logar}" th:object="${usuario}" method="post">
                   <!-- Email input -->
                   <div class="form-outline mb-4">
-                    <input type="text" th:field="*{cpf}" class="form-control" required />
+                    <input type="text" th:field="*{cpf}" class="form-control"  />
                     <label class="form-label" for="form3Example3">usuário</label>
                   </div>
   
                   <!-- Password input -->
                   <div class="form-outline mb-4">
-                    <input type="password"  th:field="*{senha}"  class="form-control" required />
+                    <input type="password"  th:field="*{senha}"  class="form-control"  />
                     <label class="form-label" for="form3Example4">senha</label>
                   </div>
   
@@ -50,8 +50,13 @@
                   <button type="submit" id="btn-logar" class="btn btn-primary btn-block mb-4">
                    Logar
                   </button>
-                  
                 </form>
+                <div th:if="${erro}" class="alert alert-danger" role="alert">
+                    <span th:text="${erro}"></span>
+                  </div>
+                  <div th:if="${mensagem}" class="alert alert-success" role="alert">
+                    <span th:text="${mensagem}"></span>
+                  </div>
               </div>
             </div>
           </div>

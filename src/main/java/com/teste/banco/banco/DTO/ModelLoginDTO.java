@@ -1,5 +1,7 @@
 package com.teste.banco.banco.DTO;
 
+import jakarta.validation.constraints.NotBlank;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,8 +9,9 @@ import lombok.Setter;
 @Setter
 public class ModelLoginDTO {
     
+    @NotBlank(message = "CPF é obrigatório")
     private String cpf;
-    private String nome;
+
+    @NotBlank(message = "Senha é obrigatória")
     private String senha;
-    private String perfil;
 }

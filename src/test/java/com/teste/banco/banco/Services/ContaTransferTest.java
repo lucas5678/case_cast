@@ -38,7 +38,7 @@ class ContaTransferTest {
         contaOrigem.setNumeroConta(1);
         contaOrigem.setSaldo(200.0); // Saldo inicial para a conta de origem
         contaOrigem.setCpf("123");
-        
+
         // Conta de destino com saldo inicial
         ModelConta contaDestino = new ModelConta();
         contaDestino.setNumeroConta(2);
