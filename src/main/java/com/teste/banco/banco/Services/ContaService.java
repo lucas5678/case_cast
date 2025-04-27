@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.teste.banco.banco.DTO.ModelContaDTO;
 import com.teste.banco.banco.Models.ModelConta;
 import com.teste.banco.banco.Repository.ContaRepository;
 import com.teste.banco.banco.exceptions.ContaException;
@@ -15,11 +16,11 @@ public class ContaService {
     @Autowired
     private ContaRepository contaRepository;
 
-    public ModelConta salvarConta(ModelConta conta) {
-        validarCpf(conta.getCpf());
-        validarNumeroConta(conta.getNumeroConta());
-        validarSaldo(conta.getSaldo());
-        return contaRepository.save(conta);
+    public ModelConta salvarConta(ModelContaDTO contaDTO) {
+        validarCpf(contaDTO.getCpf());
+        validarNumeroConta(contaDTO.getNumeroConta());
+        validarSaldo(contaDTO.getSaldo());
+        return contaRepository.save(contaDTO.toEntity());
     }
 
     private void validarCpf(String cpf) {

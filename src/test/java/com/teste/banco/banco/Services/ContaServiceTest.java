@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import com.teste.banco.banco.DTO.ModelContaDTO;
 import com.teste.banco.banco.Models.ModelConta;
 import com.teste.banco.banco.Repository.ContaRepository;
 import com.teste.banco.banco.exceptions.ContaException;
@@ -31,24 +32,36 @@ class ContaServiceTest {
 
     @Test
     void salvarConta_DeveSalvarComSucesso() {
-        ModelConta conta = new ModelConta();
-        conta.setCpf("12345678900");
-        conta.setNumeroConta(12345);
-        conta.setSaldo(100.0);
+        // Arrange
+        ModelContaDTO contaDTO = new ModelContaDTO();
+        contaDTO.setCpf("419442078050000");
+        contaDTO.setNumeroConta(12345);
+        contaDTO.setSaldo(100.0);
+        contaDTO.setTitular("João");
 
-        when(contaRepository.existsByCpf(conta.getCpf())).thenReturn(false);
-        when(contaRepository.existsByNumeroConta(conta.getNumeroConta())).thenReturn(false);
-        when(contaRepository.save(conta)).thenReturn(conta);
+        ModelConta contaEntity = contaDTO.toEntity();
 
-        ModelConta result = contaService.salvarConta(conta);
+        // Mock do comportamento do repository
+        when(contaRepository.existsByCpf(contaDTO.getCpf())).thenReturn(false);
+        when(contaRepository.existsByNumeroConta(contaDTO.getNumeroConta())).thenReturn(false);
+        when(contaRepository.save(any(ModelConta.class))).thenReturn(contaEntity);
 
-        assertEquals(conta, result);
-        verify(contaRepository).save(conta);
+        // Act
+        ModelConta result = contaService.salvarConta(contaDTO);
+
+        // Assert — valida campo a campo
+        assertEquals(contaDTO.getCpf(), result.getCpf());
+        assertEquals(contaDTO.getNumeroConta(), result.getNumeroConta());
+        assertEquals(contaDTO.getSaldo(), result.getSaldo());
+        assertEquals(contaDTO.getTitular(), result.getTitular());
+
+        // Verifica se o método save foi chamado com qualquer instância de ModelConta
+        verify(contaRepository).save(any(ModelConta.class));
     }
 
     @Test
     void salvarConta_DeveLancarExcecao_SeCpfJaCadastrado() {
-        ModelConta conta = new ModelConta();
+        ModelContaDTO conta = new ModelContaDTO();
         conta.setCpf("419442078050");
         conta.setNumeroConta(12345);
         conta.setSaldo(100.0);
@@ -63,7 +76,7 @@ class ContaServiceTest {
 
     @Test
     void salvarConta_DeveLancarExcecao_SeNumeroContaJaExiste() {
-        ModelConta conta = new ModelConta();
+        ModelContaDTO conta = new ModelContaDTO();
         conta.setCpf("41944207805");
         conta.setNumeroConta(12345);
         conta.setSaldo(100.0);
@@ -78,7 +91,7 @@ class ContaServiceTest {
 
     @Test
     void salvarConta_DeveLancarExcecao_SeSaldoNegativo() {
-        ModelConta conta = new ModelConta();
+        ModelContaDTO conta = new ModelContaDTO();
         conta.setCpf("419442078051111");
         conta.setNumeroConta(12345);
         conta.setSaldo(-50.0);

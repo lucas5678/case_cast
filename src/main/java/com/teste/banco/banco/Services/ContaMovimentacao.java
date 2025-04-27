@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.teste.banco.banco.DTO.ModelContaDTO;
 import com.teste.banco.banco.Models.ModelConta;
 import com.teste.banco.banco.Repository.ContaRepository;
 import com.teste.banco.banco.exceptions.ContaException;
@@ -19,7 +21,7 @@ public class ContaMovimentacao {
     }
 
     @Transactional
-    public ModelConta AdicionarCredito(ModelConta conta) {
+    public ModelConta AdicionarCredito(ModelContaDTO conta) {
         Optional<ModelConta> optionalConta = contaRepository.findByNumeroContaUpdate(conta.getNumeroConta());
         if(conta.getSaldo() < 0) {
             throw new ContaException("Valor de crédito não pode ser negativo!");

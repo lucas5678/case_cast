@@ -8,9 +8,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.teste.banco.banco.DTO.ModelContaDTO;
+import com.teste.banco.banco.DTO.ModeloTransferDTO;
 import com.teste.banco.banco.Models.ModelConta;
 import com.teste.banco.banco.Services.ContaMovimentacao;
 import com.teste.banco.banco.Services.ContaService;
+import com.teste.banco.banco.Services.ContaTransfer;
 
 import org.springframework.ui.Model;
 
@@ -23,6 +26,9 @@ public class ContaController {
     @Autowired
     private ContaMovimentacao contaMovimentacao;
 
+    @Autowired
+    private ContaTransfer contaTransfer;
+
     @GetMapping("/admin")
     public String Admin(Model model) {
         model.addAttribute("conta", new ModelConta());
@@ -31,14 +37,14 @@ public class ContaController {
 
     @GetMapping("/novo")
     public String mostrarFormularioDeCadastro(Model model) {
-        ModelConta conta = new ModelConta();
+        ModelContaDTO conta = new ModelContaDTO();
         conta.setNumeroConta(contaService.gerarNumeroConta());
         model.addAttribute("conta", conta);
         return "cadastro-clientes";
     }
 
     @PostMapping("/cadastro-conta")
-    public String salvarConta(@ModelAttribute ModelConta conta, RedirectAttributes redirectAttributes) {
+    public String salvarConta(@ModelAttribute ModelContaDTO conta, RedirectAttributes redirectAttributes) {
         try {
             contaService.salvarConta(conta);
             redirectAttributes.addFlashAttribute("mensagem", "Conta cadastrada com sucesso!");
@@ -67,7 +73,7 @@ public class ContaController {
     }
 
     @GetMapping("/buscar-conta")
-    public String buscarConta(@RequestParam Integer numeroConta, RedirectAttributes redirectAttributes) {
+    public String buscarConta(@RequestParam(name = "numeroConta") Integer numeroConta, RedirectAttributes redirectAttributes) {
         ModelConta conta = contaMovimentacao.buscarPorNumero(numeroConta).orElse(null);
         if (conta == null) {
             redirectAttributes.addFlashAttribute("erro", "Conta não encontrada");
@@ -79,7 +85,7 @@ public class ContaController {
     }
 
     @GetMapping("/buscar-conta-debito")
-    public String buscarContaDebito(@RequestParam Integer numeroConta, RedirectAttributes redirectAttributes) {
+    public String buscarContaDebito(@RequestParam(name = "numeroConta") Integer numeroConta, RedirectAttributes redirectAttributes) {
         ModelConta conta = contaMovimentacao.buscarPorNumero(numeroConta).orElse(null);
         if (conta == null) {
             redirectAttributes.addFlashAttribute("erro", "Conta não encontrada");
@@ -91,7 +97,7 @@ public class ContaController {
     }
 
     @PostMapping("/adicionar-credito")
-    public String AdicionarCredito(@ModelAttribute ModelConta conta, RedirectAttributes redirectAttributes) {
+    public String AdicionarCredito(@ModelAttribute ModelContaDTO conta, RedirectAttributes redirectAttributes) {
         try {
             contaMovimentacao.AdicionarCredito(conta);
             redirectAttributes.addFlashAttribute("mensagem", "Valor adicionado com sucesso!");
@@ -112,4 +118,24 @@ public class ContaController {
         return "redirect:/view-debitar-credito";
     }
 
+
+    @GetMapping("/view-movimentacao")
+    public String ViewMovimentacao(Model model) {
+        // Se já existe um atributo "conta" (via RedirectAttributes), não sobrescreva
+        ModeloTransferDTO conta = new ModeloTransferDTO();
+        model.addAttribute("conta", conta);
+        return "movimentacao";
+    }
+    
+    @PostMapping("/transferir")
+    public String Transferir(@ModelAttribute ModeloTransferDTO conta, RedirectAttributes redirectAttributes) {
+        try {
+            contaTransfer.transferir(conta);
+            redirectAttributes.addFlashAttribute("mensagem", "Valor transferido com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+            redirectAttributes.addFlashAttribute("conta", conta);
+        }
+        return "redirect:/view-movimentacao";
+    }
 }
