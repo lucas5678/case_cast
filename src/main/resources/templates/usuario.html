@@ -1,0 +1,25 @@
+<div th:replace="compartilhado/menuUsuario"></div>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-sm-6">
+        <div class="card">
+            <h5 class="card-header">Seja bem vindo</h5>
+            <div class="card-body">
+              <h5 class="card-title">Nome: <span th:text="${conta.nome}"></span></h5>
+              <h3 class="card-text">CPF:<span th:text="${conta.cpf}"></span></h3>
+            </div>
+          </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="card">
+            <h5 class="card-header">Dados da conta</h5>
+            <div class="card-body">
+              <h5 class="card-title">N° da conta: <span th:text="${conta.numeroConta}"></span></h5>
+              <h3 class="card-text">Saldo: R$<span th:text="${conta.saldo}"></span></h3>
+            </div>
+          </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

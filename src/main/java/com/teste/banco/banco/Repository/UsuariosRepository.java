@@ -10,4 +10,6 @@ import com.teste.banco.banco.Models.ModelUsuarios;
 public interface UsuariosRepository extends JpaRepository<ModelUsuarios, Long> {
     
     Optional<ModelUsuarios> findByCpfAndSenha(String cpf, String senha);
+
+    Optional<ModelUsuarios> findByCpf(String cpf);
 }

@@ -14,4 +14,12 @@ public class ModelLoginDTO {
 
     @NotBlank(message = "Senha é obrigatória")
     private String senha;
+
+    private String perfil; 
+    private String nome;
+    private String titular;
+    private int numeroConta;
+    private double saldo;
+    private int numeroContaDestino;
+    private double valorTransferencia;
 }

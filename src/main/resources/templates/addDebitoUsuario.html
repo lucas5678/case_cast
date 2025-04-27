@@ -1,0 +1,39 @@
+<div th:replace="compartilhado/menuUsuario"></div>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div th:if="${erro}" class="alert alert-danger" role="alert">
+                <span th:text="${erro}"></span>
+              </div>
+              <div th:if="${mensagem}" class="alert alert-success" role="alert">
+                <span th:text="${mensagem}"></span>
+              </div>
+              <h4 class="text-center">Adicionar Crédito</h4>
+            
+            <form th:action="@{/debitar-credito-usuario}" th:object="${conta}" method="post">
+                <div class="mb-3">
+                    <label for="numeroConta" class="form-label">N° Conta</label>
+                    <input type="number" th:field="*{numeroConta}" name="numeroConta" readonly class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="cpf" class="form-label">CPF</label>
+                    <input type="text" th:field="*{cpf}" readonly class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="titular" class="form-label">Titular</label>
+                    <input type="text" th:field="*{titular}" readonly class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="saldo" class="form-label">Valor</label>
+                    <input type="number" th:field="*{saldo}" step="0.01" required class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Debitar Crédito</button>
+            </form>
+            
+        </div>
+    </div>
+</div>
+</body>
+
+
+</html>

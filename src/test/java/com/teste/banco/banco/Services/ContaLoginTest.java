@@ -36,7 +36,7 @@ class ContaLoginTest {
 
         when(usuariosRepository.findByCpfAndSenha("123", "senha")).thenReturn(Optional.of(usuario));
 
-        ModelUsuarios result = contaLogin.logar(dto);
+        ModelLoginDTO result = contaLogin.logar(dto);
 
         assertNotNull(result);
         assertEquals("123", result.getCpf());
