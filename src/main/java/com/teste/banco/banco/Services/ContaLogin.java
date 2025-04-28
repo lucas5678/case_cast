@@ -21,13 +21,14 @@ public class ContaLogin {
         // verifica se usuarios e senha existem no banco de dados
         ModelUsuarios usuarioBancoEntity = usuariosRepository.findByCpfAndSenha(usuario.getCpf(), usuario.getSenha())
                 .orElseThrow(() -> new RuntimeException("Usuário ou senha inválidos!"));
-
-        if (!usuarioBancoEntity.getCpf().equals("")) {
-            ModelConta contaBancoEntity = contaRepository.findByCpf(usuarioBancoEntity.getCpf())
-                    .orElseThrow(() -> new RuntimeException("Conta não encontrada!"));
-            usuarioBanco.setNumeroConta(contaBancoEntity.getNumeroConta());
-            usuarioBanco.setTitular(usuarioBancoEntity.getNome());
-            usuarioBanco.setSaldo(contaBancoEntity.getSaldo());
+        if ("user".equals(usuarioBancoEntity.getPerfil())) {
+            if (!usuarioBancoEntity.getCpf().equals("")) {
+                ModelConta contaBancoEntity = contaRepository.findByCpf(usuarioBancoEntity.getCpf())
+                        .orElseThrow(() -> new RuntimeException("Conta não encontrada!"));
+                usuarioBanco.setNumeroConta(contaBancoEntity.getNumeroConta());
+                usuarioBanco.setTitular(usuarioBancoEntity.getNome());
+                usuarioBanco.setSaldo(contaBancoEntity.getSaldo());
+            }
         }
         usuarioBanco.setCpf(usuarioBancoEntity.getCpf());
         usuarioBanco.setSenha(usuarioBancoEntity.getSenha());
@@ -36,22 +37,25 @@ public class ContaLogin {
         return usuarioBanco;
     }
 
-   public ModelLoginDTO AtualizaInformacoes(ModelLoginDTO usuario) {
+    public ModelLoginDTO AtualizaInformacoes(ModelLoginDTO usuario) {
         ModelLoginDTO usuarioBanco = new ModelLoginDTO();
         ModelUsuarios usuarioBancoEntity = usuariosRepository.findByCpf(usuario.getCpf())
                 .orElseThrow(() -> new RuntimeException("Usuário ou senha inválidos!"));
-
-        if (!usuarioBancoEntity.getCpf().equals("")) {
-            ModelConta contaBancoEntity = contaRepository.findByCpf(usuarioBancoEntity.getCpf())
-                    .orElseThrow(() -> new RuntimeException("Conta não encontrada!"));
-            usuarioBanco.setNumeroConta(contaBancoEntity.getNumeroConta());
-            usuarioBanco.setTitular(usuarioBancoEntity.getNome());
-            usuarioBanco.setSaldo(contaBancoEntity.getSaldo());
+        // verifica se usuario é admin ou user
+        if ("user".equals(usuarioBancoEntity.getPerfil())) {
+            if (!usuarioBancoEntity.getCpf().equals("")) {
+                ModelConta contaBancoEntity = contaRepository.findByCpf(usuarioBancoEntity.getCpf())
+                        .orElseThrow(() -> new RuntimeException("Conta não encontrada!"));
+                usuarioBanco.setNumeroConta(contaBancoEntity.getNumeroConta());
+                usuarioBanco.setTitular(usuarioBancoEntity.getNome());
+                usuarioBanco.setSaldo(contaBancoEntity.getSaldo());
+            }
         }
+
         usuarioBanco.setCpf(usuarioBancoEntity.getCpf());
         usuarioBanco.setSenha(usuarioBancoEntity.getSenha());
         usuarioBanco.setPerfil(usuarioBancoEntity.getPerfil());
         usuarioBanco.setNome(usuarioBancoEntity.getNome());
-        return usuarioBanco; 
+        return usuarioBanco;
     }
 }
