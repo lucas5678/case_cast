@@ -20,6 +20,14 @@ public class ContaLogin {
     @Autowired
     ContaRepository contaRepository;
 
+    /**
+     * Autentica um usuário com base no CPF e senha informados.
+     * Caso o perfil seja "user", também carrega os dados da conta bancária.
+     *
+     * @param usuario DTO contendo CPF e senha para autenticação
+     * @return ModelLoginDTO preenchido com os dados do usuário autenticado
+     * @throws RuntimeException se o usuário/senha forem inválidos ou a conta não for encontrada
+     */
     public ModelLoginDTO logar(ModelLoginDTO usuario) {
         log.info("Tentativa de login para CPF: {}", usuario.getCpf());
         
@@ -51,6 +59,14 @@ public class ContaLogin {
         }
     }
 
+    /**
+     * Atualiza e retorna as informações do usuário com base no CPF informado.
+     * Caso o perfil seja "user", também recarrega os dados da conta bancária.
+     *
+     * @param usuario DTO contendo o CPF do usuário a ser atualizado
+     * @return ModelLoginDTO preenchido com os dados atualizados do usuário
+     * @throws RuntimeException se o usuário não for encontrado
+     */
     public ModelLoginDTO AtualizaInformacoes(ModelLoginDTO usuario) {
         ModelLoginDTO usuarioBanco = new ModelLoginDTO();
         ModelUsuarios usuarioBancoEntity = usuariosRepository.findByCpf(usuario.getCpf())
