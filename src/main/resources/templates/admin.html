@@ -1,4 +1,43 @@
-<div th:replace="compartilhado/menu"></div>
-    
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CaseCast Bank - Admin</title>
+</head>
+<body>
+    <div th:replace="compartilhado/menu"></div>
+
+    <main class="admin-main">
+        <div class="welcome-header">
+            <div>
+                <h1 class="welcome-title">Painel Administrativo</h1>
+                <p class="welcome-subtitle">Bem-vindo ao CaseCast Bank — gerencie operações e clientes</p>
+            </div>
+            <div class="welcome-badge">🏦 Admin</div>
+        </div>
+
+        <div class="quick-access-grid">
+            <a href="/novo" class="quick-card">
+                <div class="quick-card-icon">👤</div>
+                <div class="quick-card-title">Novo Cliente</div>
+                <div class="quick-card-desc">Cadastrar novo cliente no sistema</div>
+            </a>
+            <a href="/view-add-credito" class="quick-card">
+                <div class="quick-card-icon">💰</div>
+                <div class="quick-card-title">Creditar</div>
+                <div class="quick-card-desc">Adicionar crédito em conta</div>
+            </a>
+            <a href="/view-debitar-credito" class="quick-card">
+                <div class="quick-card-icon">💸</div>
+                <div class="quick-card-title">Debitar</div>
+                <div class="quick-card-desc">Realizar débito em conta</div>
+            </a>
+            <a href="/view-movimentacao" class="quick-card">
+                <div class="quick-card-icon">📊</div>
+                <div class="quick-card-title">Movimentações</div>
+                <div class="quick-card-desc">Ver histórico de transações</div>
+            </a>
+        </div>
+    </main>
 </body>
 </html>
