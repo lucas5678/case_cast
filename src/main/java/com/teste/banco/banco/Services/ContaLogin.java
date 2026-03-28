@@ -9,6 +9,7 @@ import com.teste.banco.banco.Models.ModelConta;
 import com.teste.banco.banco.Models.ModelUsuarios;
 import com.teste.banco.banco.Repository.ContaRepository;
 import com.teste.banco.banco.Repository.UsuariosRepository;
+import com.teste.banco.banco.exceptions.LoginException;
 
 @Service
 public class ContaLogin {
@@ -26,7 +27,7 @@ public class ContaLogin {
      *
      * @param usuario DTO contendo CPF e senha para autenticação
      * @return ModelLoginDTO preenchido com os dados do usuário autenticado
-     * @throws RuntimeException se o usuário/senha forem inválidos ou a conta não for encontrada
+     * @throws LoginException se o usuário/senha forem inválidos ou a conta não for encontrada
      */
     public ModelLoginDTO logar(ModelLoginDTO usuario) {
         log.info("Tentativa de login para CPF: {}", usuario.getCpf());
@@ -35,14 +36,14 @@ public class ContaLogin {
             ModelLoginDTO usuarioBanco = new ModelLoginDTO();
             // verifica se usuarios e senha existem no banco de dados
             ModelUsuarios usuarioBancoEntity = usuariosRepository.findByCpfAndSenha(usuario.getCpf(), usuario.getSenha())
-                    .orElseThrow(() -> new RuntimeException("Usuário ou senha inválidos!"));
+                    .orElseThrow(() -> new LoginException("Usuário ou senha inválidos!"));
             
             log.info("Login bem-sucedido para CPF: {} | Perfil: {}", usuarioBancoEntity.getCpf(), usuarioBancoEntity.getPerfil());
             
             if ("user".equals(usuarioBancoEntity.getPerfil())) {
                 if (!usuarioBancoEntity.getCpf().equals("")) {
                     ModelConta contaBancoEntity = contaRepository.findByCpf(usuarioBancoEntity.getCpf())
-                            .orElseThrow(() -> new RuntimeException("Conta não encontrada!"));
+                            .orElseThrow(() -> new LoginException("Conta não encontrada!"));
                     usuarioBanco.setNumeroConta(contaBancoEntity.getNumeroConta());
                     usuarioBanco.setTitular(usuarioBancoEntity.getNome());
                     usuarioBanco.setSaldo(contaBancoEntity.getSaldo());
@@ -53,7 +54,7 @@ public class ContaLogin {
             usuarioBanco.setPerfil(usuarioBancoEntity.getPerfil());
             usuarioBanco.setNome(usuarioBancoEntity.getNome());
             return usuarioBanco;
-        } catch (RuntimeException e) {
+        } catch (LoginException e) {
             log.warn("Falha no login para CPF: {} | Motivo: {}", usuario.getCpf(), e.getMessage());
             throw e;
         }
