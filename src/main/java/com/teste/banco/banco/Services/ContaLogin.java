@@ -40,7 +40,7 @@ public class ContaLogin {
     public ModelLoginDTO AtualizaInformacoes(ModelLoginDTO usuario) {
         ModelLoginDTO usuarioBanco = new ModelLoginDTO();
         ModelUsuarios usuarioBancoEntity = usuariosRepository.findByCpf(usuario.getCpf())
-                .orElseThrow(() -> new RuntimeException("Usuário ou senha inválidos!"));
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
         // verifica se usuario é admin ou user
         if ("user".equals(usuarioBancoEntity.getPerfil())) {
             if (!usuarioBancoEntity.getCpf().equals("")) {
