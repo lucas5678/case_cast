@@ -88,6 +88,7 @@ public class ContaLogin {
         usuarioBanco.setSenha(usuarioBancoEntity.getSenha());
         usuarioBanco.setPerfil(usuarioBancoEntity.getPerfil());
         usuarioBanco.setNome(usuarioBancoEntity.getNome());
+        log.info("Informações atualizadas com sucesso para CPF: {}", usuario.getCpf());
         return usuarioBanco;
     }
 }
