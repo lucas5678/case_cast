@@ -66,7 +66,7 @@ public class ContaLogin {
      *
      * @param usuario DTO contendo o CPF do usuário a ser atualizado
      * @return ModelLoginDTO preenchido com os dados atualizados do usuário
-     * @throws RuntimeException se o usuário não for encontrado
+     * @throws LoginException se o usuário não for encontrado
      */
     public ModelLoginDTO AtualizaInformacoes(ModelLoginDTO usuario) {
         ModelLoginDTO usuarioBanco = new ModelLoginDTO();
