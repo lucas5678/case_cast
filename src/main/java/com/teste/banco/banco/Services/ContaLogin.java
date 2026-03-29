@@ -22,7 +22,7 @@ public class ContaLogin {
     ContaRepository contaRepository;
 
     /**
-     * Autentica um usuário com base no CPF e senha informados.
+     * Autentica um usuário verificando CPF e senha no banco de dados.
      * Caso o perfil seja "user", também carrega os dados da conta bancária.
      *
      * @param usuario DTO contendo CPF e senha para autenticação
