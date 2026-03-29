@@ -70,6 +70,7 @@ public class ContaLogin {
      */
     public ModelLoginDTO AtualizaInformacoes(ModelLoginDTO usuario) {
         ModelLoginDTO usuarioBanco = new ModelLoginDTO();
+        log.info("Atualizando informações para CPF: {}", usuario.getCpf());
         ModelUsuarios usuarioBancoEntity = usuariosRepository.findByCpf(usuario.getCpf())
                 .orElseThrow(() -> new LoginException("Usuário não encontrado!"));
         // verifica se usuario é admin ou user
