@@ -71,12 +71,12 @@ public class ContaLogin {
     public ModelLoginDTO AtualizaInformacoes(ModelLoginDTO usuario) {
         ModelLoginDTO usuarioBanco = new ModelLoginDTO();
         ModelUsuarios usuarioBancoEntity = usuariosRepository.findByCpf(usuario.getCpf())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
+                .orElseThrow(() -> new LoginException("Usuário não encontrado!"));
         // verifica se usuario é admin ou user
         if ("user".equals(usuarioBancoEntity.getPerfil())) {
             if (!usuarioBancoEntity.getCpf().equals("")) {
                 ModelConta contaBancoEntity = contaRepository.findByCpf(usuarioBancoEntity.getCpf())
-                        .orElseThrow(() -> new RuntimeException("Conta não encontrada!"));
+                        .orElseThrow(() -> new LoginException("Conta não encontrada!"));
                 usuarioBanco.setNumeroConta(contaBancoEntity.getNumeroConta());
                 usuarioBanco.setTitular(usuarioBancoEntity.getNome());
                 usuarioBanco.setSaldo(contaBancoEntity.getSaldo());
