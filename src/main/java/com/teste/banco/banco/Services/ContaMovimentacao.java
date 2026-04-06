@@ -13,6 +13,9 @@ import com.teste.banco.banco.exceptions.ContaException;
 
 @Service
 public class ContaMovimentacao {
+    
+    private static final Double SALDO_MINIMO = 0.0;
+    
     @Autowired
     private ContaRepository contaRepository;
     
@@ -39,22 +42,18 @@ public class ContaMovimentacao {
 
     @Transactional
     public ModelConta DebitarCredito(ModelConta conta) {
-        Optional<ModelConta> optionalConta = contaRepository.findByNumeroContaUpdate(conta.getNumeroConta());
-        if(conta.getSaldo() < 0) {
-            throw new ContaException("Valor de crÃ©dito nÃ£o pode ser negativo!");
+        if (conta.getSaldo() < 0) {
+            throw new ContaException("Valor de débito não pode ser negativo!");
         }
-        if (optionalConta.isPresent()) {
-            ModelConta contaExistente = optionalConta.get();
-            
-            //debita do valor existente o valor do credito
-            contaExistente.setSaldo(contaExistente.getSaldo() - conta.getSaldo());
-            if(contaExistente.getSaldo() < 0) {
-                throw new ContaException("Saldo insuficiente!");
-            }
-            return contaRepository.save(contaExistente);
-        } 
-        else {
-            throw new ContaException("Conta nÃ£o encontrada!");
+        ModelConta contaExistente = contaRepository
+            .findByNumeroContaUpdate(conta.getNumeroConta())
+            .orElseThrow(() -> new ContaException("Conta não encontrada!"));
+
+        double novoSaldo = contaExistente.getSaldo() - conta.getSaldo();
+        if (novoSaldo < SALDO_MINIMO) {
+            throw new ContaException("Saldo insuficiente!");
         }
+        contaExistente.setSaldo(novoSaldo);
+        return contaRepository.save(contaExistente);
     }
 }
