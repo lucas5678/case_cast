@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.teste.banco.banco.DTO.ModeloTransferDTO;
 import com.teste.banco.banco.Repository.ContaRepository;
+import com.teste.banco.banco.exceptions.ContaException;
 
 import jakarta.transaction.Transactional;
 
@@ -38,31 +39,31 @@ public class ContaTransfer {
 
     private void validarValorTransferencia(ModeloTransferDTO transferencia) {
         if (transferencia.getValorTransferencia() <= 0) {
-            throw new RuntimeException("Valor de transferência deve ser maior que zero!");
+            throw new ContaException("Valor de transferência deve ser maior que zero!");
         }
     }
 
     private void validarContasDiferentes(ModeloTransferDTO transferencia) {
         if (transferencia.getNumeroContaOrigem() == transferencia.getNumeroContaDestino()) {
-            throw new RuntimeException("A conta de origem e destino não podem ser iguais!");
+            throw new ContaException("A conta de origem e destino não podem ser iguais!");
         }
     }
 
     private void validarContaExiste(java.util.Optional<?> conta, String mensagem) {
         if (conta.isEmpty()) {
-            throw new RuntimeException(mensagem);
+            throw new ContaException(mensagem);
         }
     }
 
     private void validarCpfOrigem(String cpfConta, String cpfOrigem) {
         if (!cpfConta.equals(cpfOrigem)) {
-            throw new RuntimeException("O CPF da conta de origem não confere!");
+            throw new ContaException("O CPF da conta de origem não confere!");
         }
     }
 
     private void validarSaldoSuficiente(double saldo, double valorTransferencia) {
         if (saldo < valorTransferencia) {
-            throw new RuntimeException("Saldo insuficiente na conta de origem!");
+            throw new ContaException("Saldo insuficiente na conta de origem!");
         }
     }
 }
