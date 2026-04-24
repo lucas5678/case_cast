@@ -15,7 +15,10 @@ import com.teste.banco.banco.Models.ModelConta;
 import com.teste.banco.banco.Services.ContaLogin;
 import com.teste.banco.banco.Services.ContaMovimentacao;
 import com.teste.banco.banco.Services.ContaService;
-import com.teste.banco.banco.Services.ContaTransfer;
+import com.teste.banco.banco.strategy.CreditoStrategy;
+import com.teste.banco.banco.strategy.DebitoStrategy;
+import com.teste.banco.banco.strategy.MovimentacaoContext;
+import com.teste.banco.banco.strategy.TransferenciaStrategy;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -31,10 +34,16 @@ public class ContaController {
     private ContaMovimentacao contaMovimentacao;
 
     @Autowired
-    private ContaTransfer contaTransfer;
-
-    @Autowired
     private ContaLogin contaLogin;
+    
+    @Autowired
+    private CreditoStrategy creditoStrategy;
+    
+    @Autowired
+    private DebitoStrategy debitoStrategy;
+    
+    @Autowired
+    private TransferenciaStrategy transferenciaStrategy;
 
     @GetMapping("/admin")
     public String Admin(Model model) {
@@ -139,7 +148,12 @@ public class ContaController {
     @PostMapping("/adicionar-credito")
     public String AdicionarCredito(@ModelAttribute ModelContaDTO conta, RedirectAttributes redirectAttributes) {
         try {
-            contaMovimentacao.AdicionarCredito(conta);
+            ModelConta modelConta = new ModelConta();
+            modelConta.setNumeroConta(conta.getNumeroConta());
+            modelConta.setSaldo(conta.getSaldo());
+            
+            MovimentacaoContext context = new MovimentacaoContext(creditoStrategy);
+            context.executar(modelConta);
             redirectAttributes.addFlashAttribute("mensagem", "Valor adicionado com sucesso!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
@@ -150,29 +164,36 @@ public class ContaController {
     @PostMapping("/adicionar-credito-por-usuario")
     public String AdicionarCreditoPorUsuario(@ModelAttribute ModelContaDTO conta, RedirectAttributes redirectAttributes) {
         try {
-            contaMovimentacao.AdicionarCredito(conta);
+            ModelConta modelConta = new ModelConta();
+            modelConta.setNumeroConta(conta.getNumeroConta());
+            modelConta.setSaldo(conta.getSaldo());
+            
+            MovimentacaoContext context = new MovimentacaoContext(creditoStrategy);
+            context.executar(modelConta);
             redirectAttributes.addFlashAttribute("mensagem", "Valor adicionado com sucesso!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
         }
         return "redirect:/add-credito-user";
     }
-   
+
     @PostMapping("/debitar-credito")
     public String DebitarCredito(@ModelAttribute ModelConta conta, RedirectAttributes redirectAttributes) {
         try {
-            contaMovimentacao.DebitarCredito(conta);
+            MovimentacaoContext context = new MovimentacaoContext(debitoStrategy);
+            context.executar(conta);
             redirectAttributes.addFlashAttribute("mensagem", "Valor debitado com sucesso!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
         }
         return "redirect:/view-debitar-credito";
     }
-    
-    @PostMapping("/debitar-credito-usuario")
-    public String DebitarCreditoUsuario(@ModelAttribute ModelConta conta, RedirectAttributes redirectAttributes) {
+
+    @PostMapping("/debitar-credito-por-usuario")
+    public String DebitarCreditoPorUsuario(@ModelAttribute ModelConta conta, RedirectAttributes redirectAttributes) {
         try {
-            contaMovimentacao.DebitarCredito(conta);
+            MovimentacaoContext context = new MovimentacaoContext(debitoStrategy);
+            context.executar(conta);
             redirectAttributes.addFlashAttribute("mensagem", "Valor debitado com sucesso!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
@@ -180,52 +201,22 @@ public class ContaController {
         return "redirect:/add-debito-user";
     }
 
-
-    @GetMapping("/view-movimentacao")
-    public String ViewMovimentacao(Model model) {
-        // Se já existe um atributo "conta" (via RedirectAttributes), não sobrescreva
-        ModeloTransferDTO conta = new ModeloTransferDTO();
-        model.addAttribute("conta", conta);
-        return "movimentacao";
-    }
-
-    @GetMapping("/view-movimentacao-usuario")
-    public String ViewMovimentacaoUsuario(Model model,HttpSession session) {
-        ModelLoginDTO conta = (ModelLoginDTO) session.getAttribute("conta");
-        if (conta == null) {
-            return "redirect:/";
+    @GetMapping("/view-transferir")
+    public String ViewTransferir(Model model) {
+        if (!model.containsAttribute("transferencia")) {
+            model.addAttribute("transferencia", new ModeloTransferDTO());
         }
-        model.addAttribute("conta", conta);
-        return "movimentacaoUsuario";
+        return "transferir";
     }
-    
-    @PostMapping("/transferir")
-    public String Transferir(@ModelAttribute ModeloTransferDTO conta, RedirectAttributes redirectAttributes) {
+
+    @PostMapping("/realizar-transferencia")
+    public String RealizarTransferencia(@ModelAttribute ModeloTransferDTO transferencia, RedirectAttributes redirectAttributes) {
         try {
-            contaTransfer.transferir(conta);
-            redirectAttributes.addFlashAttribute("mensagem", "Valor transferido com sucesso!");
+            transferenciaStrategy.executarTransferencia(transferencia);
+            redirectAttributes.addFlashAttribute("mensagem", "Transferência realizada com sucesso!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
-            redirectAttributes.addFlashAttribute("conta", conta);
         }
-        return "redirect:/view-movimentacao";
-    }
-
-    @PostMapping("/transferencia-usuario")
-    public String TransferenciaPorUsuario(@ModelAttribute ModelLoginDTO conta, RedirectAttributes redirectAttributes) {
-        try {
-            ModeloTransferDTO dadosDeTransfer = new ModeloTransferDTO();
-            dadosDeTransfer.setNumeroContaOrigem(conta.getNumeroConta());
-            dadosDeTransfer.setCpfOrigem(conta.getCpf());
-            dadosDeTransfer.setNumeroContaDestino(conta.getNumeroContaDestino());
-            dadosDeTransfer.setValorTransferencia(conta.getValorTransferencia());
-            contaTransfer.transferir(dadosDeTransfer);
-            
-            redirectAttributes.addFlashAttribute("mensagem", "Valor transferido com sucesso!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("erro", e.getMessage());
-            redirectAttributes.addFlashAttribute("conta", conta);
-        }
-        return "redirect:/view-movimentacao-usuario";
+        return "redirect:/view-transferir";
     }
 }
